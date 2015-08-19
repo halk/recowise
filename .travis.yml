@@ -11,8 +11,6 @@ install:
 
 before_script:
     - cp config/config.xml.dist config/config.xml
-    - celery worker -A worker.event -n event -Q event --loglevel=INFO --broker=amqp://guest:guest@localhost:5672/ &
-    - celery worker -A worker.recommend -n recommend -Q recommend --loglevel=INFO --broker=amqp://guest:guest@localhost:5672/ &
 
 script: nosetests
 
