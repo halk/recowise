@@ -1,9 +1,0 @@
-build:
-    tests:
-        override:
-            -
-                command: nosetests
-                coverage:
-                    file: .coverage
-                    config: .coveragerc
-                    format: py-cc
