@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../config/config.xsd">
+    <recommenders>
+        <recommender name="recommender1" engine="base">
+            <on event="event1" do="perform" />
+            <taxonomy inherit="taxonomy2">
+                <taxon name="taxon4">value4</taxon>
+            </taxonomy>
+        </recommender>
+        <recommender name="recommender2" engine="base">
+            <on event="event2" do="add" />
+            <on event="event3" do="remove" />
+            <taxonomy inherit="taxonomy2">
+                <taxon name="taxon4">value4b</taxon>
+            </taxonomy>
+        </recommender>
+        <recommender name="recommender3" engine="base">
+            <on event="event2" do="add" />
+            <on event="event3" do="remove" />
+            <taxonomy inherit="taxonomy1">
+                <taxon name="taxon2">value2b</taxon>
+                <taxon name="taxon3">value3b</taxon>
+            </taxonomy>
+        </recommender>
+        <hybrid_recommender name="recommender4" engine="base">
+            <components>
+                <component name="component1" recommender="recommender1" />
+                <component name="component2" recommender="recommender2" />
+            </components>
+            <settings>
+                <test>value2</test>
+            </settings>
+        </hybrid_recommender>
+    </recommenders>
+    <taxonomies>
+        <taxonomy name="taxonomy1">
+            <taxon name="taxon1">value1</taxon>
+        </taxonomy>
+        <taxonomy name="taxonomy2" inherit="taxonomy1">
+            <taxon name="taxon2">value2</taxon>
+            <taxon name="taxon3">value3</taxon>
+        </taxonomy>
+    </taxonomies>
+    <engines>
+        <engine name="base">
+            <settings>
+                <base_url>http://localhost</base_url>
+            </settings>
+        </engine>
+    </engines>
+    <settings>
+        <celery>
+            <broker>amqp://framework:framework@localhost:5672/framework</broker>
+            <backend>redis://localhost</backend>
+        </celery>
+        <test>value</test>
+    </settings>
+</config>

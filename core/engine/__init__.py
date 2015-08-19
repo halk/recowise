@@ -1,0 +1,54 @@
+from collections import OrderedDict
+import json
+import requests
+
+class Engine(object):
+
+    def __init__(self, name, taxonomy, settings={}):
+        self.name = name
+        self.taxonomy = taxonomy
+
+        self.settings = {} if settings is None else settings
+        self.base_url = self.settings.get('base_url')
+
+        self.requests = requests
+
+    def translate(self, body):
+        return self.taxonomy.translate(body)
+
+    def call(self, method, uri, body, expected_response=204):
+        headers = {'Content-Type': 'application/json'}
+        response = self.requests.request(
+            method,
+            self.base_url + uri,
+            data=json.dumps(self.translate(body)),
+            headers=headers
+        )
+
+        return response.status_code == expected_response
+
+    def post(self, uri, body):
+        return self.call('post', uri, body)
+
+    def delete(self, uri, body):
+        return self.call('delete', uri, body)
+
+    def recommend(self, body, return_with_score=False):
+        data = self.translate(body)
+        results = self.requests.get(self.base_url + '/recommend', params=data).json(
+            object_pairs_hook=OrderedDict
+        )
+
+        if return_with_score is False:
+            return results.keys()
+        return results
+
+    # GET parameters with more than one value seem to have better compatibility
+    # with brackets behind (looking at you, PHP)
+    def add_brackets_to_lists(self, data):
+        for key, value in data.iteritems():
+            if isinstance(value, list):
+                data[key + '[]'] = value
+                data.pop(key, None)
+
+        return data

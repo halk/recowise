@@ -1,0 +1,146 @@
+<!--<?xml version="1.0"?>-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <!-- root elements -->
+    <xs:element name="config">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="recommenders" type="recommenders" minOccurs="1" maxOccurs="1">
+                    <xs:unique name="uniqueRecommender">
+                        <xs:selector xpath="recommender|hybrid_recommender" />
+                        <xs:field xpath="@name" />
+                    </xs:unique>
+                </xs:element>
+                <xs:element name="taxonomies" type="taxonomies" minOccurs="1" maxOccurs="1" />
+                <xs:element name="engines" type="engines" minOccurs="1" maxOccurs="1" />
+                <xs:element name="settings" type="settings" minOccurs="0" maxOccurs="unbounded" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- simple types -->
+
+    <xs:simpleType name="identifier">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[\w_]+" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- complex types -->
+
+    <xs:complexType name="recommenders">
+        <xs:sequence>
+            <xs:element name="recommender" type="recommender" minOccurs="1" maxOccurs="unbounded">
+                <xs:unique name="uniqueOn">
+                    <xs:selector xpath="on" />
+                    <xs:field xpath="@event" />
+                </xs:unique>
+            </xs:element>
+            <xs:element name="hybrid_recommender" type="hybridRecommender" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="baseRecommender">
+        <xs:attribute name="name" type="identifier" use="required" />
+        <xs:attribute name="engine" type="identifier" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="recommender">
+        <xs:complexContent>
+            <xs:extension base="baseRecommender">
+                <xs:sequence>
+                    <xs:element name="on" minOccurs="0" maxOccurs="unbounded">
+                        <xs:complexType>
+                            <xs:attribute name="event" type="identifier" use="required" />
+                            <xs:attribute name="do" type="identifier" use="required" />
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="taxonomy" type="taxonomy" minOccurs="0" maxOccurs="1">
+                        <xs:unique name="uniqueTaxonRecommender">
+                            <xs:selector xpath="taxon" />
+                            <xs:field xpath="@name" />
+                        </xs:unique>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="hybridRecommender">
+        <xs:complexContent>
+            <xs:extension base="baseRecommender">
+                <xs:sequence>
+                    <xs:element name="components">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="component" type="component" minOccurs="2" maxOccurs="unbounded" />
+                            </xs:sequence>
+                        </xs:complexType>
+                        <xs:unique name="uniqueComponent">
+                            <xs:selector xpath="component" />
+                            <xs:field xpath="@name" />
+                        </xs:unique>
+                    </xs:element>
+                    <xs:element name="settings" type="settings" minOccurs="0" maxOccurs="unbounded" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="component">
+        <xs:attribute name="name" type="identifier" use="required" />
+        <xs:attribute name="recommender" type="identifier" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="taxonomies">
+        <xs:sequence>
+            <xs:element name="taxonomy" type="taxonomyStandalone" minOccurs="0" maxOccurs="unbounded">
+                <xs:unique name="uniqueTaxon">
+                    <xs:selector xpath="taxon" />
+                    <xs:field xpath="@name" />
+                </xs:unique>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="taxonomy">
+        <xs:sequence>
+            <xs:element name="taxon" minOccurs="1" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:string">
+                            <xs:attribute name="name" type="identifier" use="required" />
+                        </xs:extension>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="inherit" type="identifier" />
+    </xs:complexType>
+
+    <xs:complexType name="taxonomyStandalone">
+        <xs:complexContent>
+            <xs:extension base="taxonomy">
+                <xs:attribute name="name" type="identifier" use="required" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="engines">
+        <xs:sequence>
+            <xs:element name="engine" type="engine" minOccurs="1" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="engine">
+        <xs:sequence>
+            <xs:element name="settings" type="settings" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="name" type="identifier" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="settings">
+        <xs:sequence>
+            <xs:any processContents="skip" minOccurs="1" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

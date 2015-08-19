@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="./config.xsd">
+    <recommenders>
+        <recommender name="common_products_viewed" engine="in_common">
+            <on event="viewed_product" do="post" />
+            <taxonomy inherit="user_product">
+                <taxon name="relationship">VIEWED</taxon>
+            </taxonomy>
+        </recommender>
+        <recommender name="common_products_wishlisted" engine="in_common">
+            <on event="added_to_wishlist" do="post" />
+            <on event="removed_from_wishlist" do="delete" />
+            <taxonomy inherit="user_product">
+                <taxon name="relationship">WISHLISTED</taxon>
+            </taxonomy>
+        </recommender>
+        <recommender name="similar_products_in_basket" engine="item_similarity">
+            <on event="saved_product" do="post" />
+            <on event="deleted_product" do="delete" />
+            <taxonomy inherit="base">
+                <taxon name="item_id">sku</taxon>
+                <taxon name="itemIds">sku</taxon>
+                <taxon name="attributes">data</taxon>
+            </taxonomy>
+        </recommender>
+        <hybrid_recommender name="interesting_products" engine="weighted">
+            <components>
+                <component name="views" recommender="common_products_viewed" />
+                <component name="wishlists" recommender="common_products_wishlisted" />
+            </components>
+            <settings>
+                <weight>
+                    <views>0.25</views>
+                    <wishlists>0.75</wishlists>
+                </weight>
+            </settings>
+        </hybrid_recommender>
+    </recommenders>
+    <taxonomies>
+        <taxonomy name="base">
+            <taxon name="limit">limit</taxon>
+        </taxonomy>
+        <taxonomy name="user" inherit="base">
+            <taxon name="subject">user</taxon>
+            <taxon name="subject_id">user_id</taxon>
+        </taxonomy>
+        <taxonomy name="user_product" inherit="user">
+            <taxon name="object">product</taxon>
+            <taxon name="object_id">sku</taxon>
+        </taxonomy>
+    </taxonomies>
+    <engines>
+        <engine name="in_common">
+            <settings>
+                <base_url>http://localhost:8080/</base_url>
+            </settings>
+        </engine>
+        <engine name="item_similarity">
+            <settings>
+                <base_url>http://itemsimilarity.msc.koklu.me/</base_url>
+            </settings>
+        </engine>
+    </engines>
+    <settings>
+        <celery>
+            <broker>amqp://framework:framework@localhost:5672/framework</broker>
+            <backend>redis://localhost</backend>
+        </celery>
+    </settings>
+</config>
