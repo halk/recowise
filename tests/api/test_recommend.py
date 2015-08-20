@@ -1,54 +1,36 @@
 import json
+from mock import MagicMock, patch
 from tests.api import ApiTestCase
 
 class ApiRecommendTestCase(ApiTestCase):
-    def test_get_recommend_inCommon(self):
-        # set data required for recommending
-        self.send_event('viewed_product', {
-            'user_id': 'recommend_inCommon_userA',
-            'sku': 'recommend_inCommon_product1'
-        })
-        self.send_event('viewed_product', {
-            'user_id': 'recommend_inCommon_userA',
-            'sku': 'recommend_inCommon_product2'
-        })
-        self.send_event('viewed_product', {
-            'user_id': 'recommend_inCommon_userB',
-            'sku': 'recommend_inCommon_product2'
-        })
-        self.send_event('viewed_product', {
-            'user_id': 'recommend_inCommon_userB',
-            'sku': 'recommend_inCommon_product3'
-        })
-        # we are adding another user to test the weight
-        # (users B and C who viewed the same product but user A did not)
-        self.send_event('viewed_product', {
-            'user_id': 'recommend_inCommon_userC',
-            'sku': 'recommend_inCommon_product2'
-        })
-        self.send_event('viewed_product', {
-            'user_id': 'recommend_inCommon_userC',
-            'sku': 'recommend_inCommon_product3'
-        })
-        self.send_event('viewed_product', {
-            'user_id': 'recommend_inCommon_userC',
-            'sku': 'recommend_inCommon_product4'
-        })
-        # request from recommender
-        response = self.app.get(
+    def test_recommend(self):
+        data = {'user_id': 'userA', 'limit': 1}
+        self._test_recommend(
             '/recommend/common_products_viewed',
-            query_string={'user_id': 'recommend_inCommon_userA', 'limit': 5}
+            data,
+            data
         )
-        response2 = self.app.get(
+
+    def test_recommend_multidict(self):
+        data = {'item_id[]': 'itemA', 'item_id[]': 'itemB', 'limit': 1}
+        expected_data = {'item_id': ['itemA', 'itemB'], 'limit': 1}
+        self._test_recommend(
             '/recommend/common_products_viewed',
-            query_string={'user_id': 'recommend_inCommon_userA', 'limit': 1}
+            data,
+            expected_data
         )
-        # tests
-        self.assertEqual(
-            json.loads(response.get_data()),
-            [u'recommend_inCommon_product3', u'recommend_inCommon_product4']
-        )
-        self.assertEqual(
-            json.loads(response2.get_data()),
-            [u'recommend_inCommon_product3']
-        )
+
+    def _test_recommend(self, subject, query_string, expected_data):
+        with patch('worker.recommend.recommend.delay') as mock_task:
+            expected_result = ['result1', 'result2']
+
+            worker_result = MagicMock()
+            worker_result.get = MagicMock()
+            worker_result.get.return_value = expected_result
+
+            mock_task.return_value = worker_result
+
+            response = self.app.get(subject, query_string=query_string)
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(json.loads(response.get_data()), expected_result)
+            self.assertTrue(mock_task.delay.called_with(subject, expected_data))

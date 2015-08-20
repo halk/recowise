@@ -10,7 +10,8 @@ class BaseEngineTestCase:
         })
 
         self.engine.requests = MagicMock()
-        self.engine.requests.get = MagicMock()
+        self.engine.requests.request = MagicMock()
+        self.engine.requests.post = MagicMock()
 
     def test_post(self):
         self._test_event('post')

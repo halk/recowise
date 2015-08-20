@@ -19,3 +19,6 @@ def process_event(name, body):
             logger.error(traceback.format_exception(
                 exc_type, exc_value, exc_traceback
             ))
+            return False
+
+    return True
