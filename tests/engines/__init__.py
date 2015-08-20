@@ -20,8 +20,7 @@ class BaseEngineTestCase:
         self._test_event('delete')
 
     def _test_event(self, method):
-        response_mock = MagicMock()
-        response_mock.status_code = 204
+        response_mock = MagicMock(status_code=204)
         self.engine.requests.request.return_value = response_mock
 
         self.assertTrue(getattr(self.engine, method)({'value': 'test'}))

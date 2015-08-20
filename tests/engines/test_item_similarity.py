@@ -9,10 +9,8 @@ class EngineTestCase(BaseEngineTestCase, unittest.TestCase):
         self._setUp(Engine, 'recommender1')
 
     def test_delete(self):
-        response_mock = MagicMock()
-        response_mock.status_code = 204
-        self.engine.requests.delete = MagicMock()
-        self.engine.requests.delete.return_value = response_mock
+        response_mock = MagicMock(status_code=204)
+        self.engine.requests.delete = MagicMock(return_value=response_mock)
 
         self.assertTrue(self.engine.delete({'sku': 'test'}))
 

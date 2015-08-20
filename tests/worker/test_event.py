@@ -5,8 +5,7 @@ from tests.worker import WorkerTestCase
 class WorkerEventTestCase(WorkerTestCase):
     def test_event_with_single_observer(self):
         recommender = MagicMock()
-        recommender.perform = MagicMock()
-        recommender.perform.return_value = True
+        recommender.perform = MagicMock(return_value=True)
 
         self._test_event('event1', [{
             'recommender': recommender,
@@ -15,11 +14,9 @@ class WorkerEventTestCase(WorkerTestCase):
 
     def test_event_with_two_observers(self):
         recommender1 = MagicMock()
-        recommender1.add = MagicMock()
-        recommender1.add.return_value = True
+        recommender1.add = MagicMock(return_value=True)
         recommender2 = MagicMock()
-        recommender2.add = MagicMock()
-        recommender2.add.return_value = True
+        recommender2.add = MagicMock(return_value=True)
 
         self._test_event('event2', [
             {'recommender': recommender1, 'action': 'add'},
@@ -31,8 +28,7 @@ class WorkerEventTestCase(WorkerTestCase):
 
     def test_event_exception(self):
         recommender = MagicMock()
-        recommender.perform = MagicMock()
-        recommender.perform.return_value = False
+        recommender.perform = MagicMock(return_value=False)
 
         self._test_event('event1', [{
             'recommender': recommender,

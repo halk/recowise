@@ -12,7 +12,7 @@ class ApiRecommendTestCase(ApiTestCase):
         )
 
     def test_recommend_multidict(self):
-        data = {'item_id[]': 'itemA', 'item_id[]': 'itemB', 'limit': 1}
+        data = 'item_id=itemA&item_id=itemB&limit=1'
         expected_data = {'item_id': ['itemA', 'itemB'], 'limit': 1}
         self._test_recommend(
             '/recommend/common_products_viewed',
@@ -25,8 +25,7 @@ class ApiRecommendTestCase(ApiTestCase):
             expected_result = ['result1', 'result2']
 
             worker_result = MagicMock()
-            worker_result.get = MagicMock()
-            worker_result.get.return_value = expected_result
+            worker_result.get = MagicMock(return_value=expected_result)
 
             mock_task.return_value = worker_result
 

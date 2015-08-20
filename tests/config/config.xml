@@ -11,6 +11,7 @@
             <on event="event2" do="add" />
             <on event="event3" do="remove" />
             <taxonomy inherit="taxonomy2">
+                <taxon name="taxon3">value3b</taxon><!-- taxon3 from parent will be ignored -->
                 <taxon name="taxon4">value4b</taxon>
             </taxonomy>
         </recommender>

@@ -22,8 +22,7 @@ class EngineTestCase(unittest.TestCase):
         self.assertDictEqual(translated, {'key': 'test', 'key2': 'value2'})
 
     def test_post(self):
-        response_mock = MagicMock()
-        response_mock.status_code = 204
+        response_mock = MagicMock(status_code=204)
         self.engine.requests.request.return_value = response_mock
 
         self.assertTrue(self.engine.post('/test', {'value': 'test'}))
@@ -32,8 +31,7 @@ class EngineTestCase(unittest.TestCase):
         self.assertFalse(self.engine.post('/test', {'value': 'test'}))
 
     def test_delete(self):
-        response_mock = MagicMock()
-        response_mock.status_code = 204
+        response_mock = MagicMock(status_code=204)
         self.engine.requests.request.return_value = response_mock
 
         self.assertTrue(self.engine.delete('/test', {'value': 'test'}))

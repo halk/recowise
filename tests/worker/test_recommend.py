@@ -4,8 +4,7 @@ from tests.worker import WorkerTestCase
 
 class WorkerEventTestCase(WorkerTestCase):
     def test_recommend(self):
-        recommend = MagicMock()
-        recommend.return_value = True
+        recommend = MagicMock(return_value=True)
 
         self._test_recommend('recommender1', recommend)
 
@@ -13,8 +12,7 @@ class WorkerEventTestCase(WorkerTestCase):
         self._test_recommend('unknown_recommender', None, False)
 
     def test_recommend_exception(self):
-        recommend = MagicMock()
-        recommend.return_value = False
+        recommend = MagicMock(side_effect=Exception('oops'), return_value=False)
 
         self._test_recommend('recommender1', recommend, False)
 
