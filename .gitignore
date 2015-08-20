@@ -1,4 +1,5 @@
 /config/config.xml
 /log/*
+!/log/.gitkeep
 __pycache__/
 *.py[cod]
