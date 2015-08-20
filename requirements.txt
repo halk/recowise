@@ -6,6 +6,7 @@ backports.ssl-match-hostname==3.4.0.2
 billiard==3.3.0.19
 celery==3.1.17
 certifi==2015.4.28
+coverage==3.7.1
 Flask==0.10.1
 Flask-RESTful==0.3.2
 flower==0.8.2
