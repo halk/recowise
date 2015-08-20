@@ -8,7 +8,7 @@ install:
 before_script:
     - cp config/config.xml.dist config/config.xml
 
-script: nosetests
+script: nosetests --with-coverage --cover-erase
 
 after_script:
     - pip install scrutinizer-ocular
