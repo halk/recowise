@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from core.engine import Engine as BaseEngine
+from core.engine.simple import Engine as BaseEngine
 
 class Engine(BaseEngine):
 

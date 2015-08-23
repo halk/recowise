@@ -1,6 +1,6 @@
 import unittest
 from core.engine.hybrid import HybridEngine
-from core.engine import Engine
+from core.engine.simple import Engine
 from core.taxonomy import Taxonomy
 
 class HybridTestCase(unittest.TestCase):
@@ -14,7 +14,7 @@ class HybridTestCase(unittest.TestCase):
         })
         components = {'component1': component1, 'component2': component2}
         settings = {'test': 'value'}
-        self.engine = HybridEngine('hybrid', components, settings)
+        self.engine = HybridEngine('hybrid', taxonomy, components, settings)
 
     def test_components(self):
         components = self.engine.get_components()

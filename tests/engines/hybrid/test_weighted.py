@@ -3,7 +3,7 @@ from mock import MagicMock
 from copy import deepcopy
 from collections import OrderedDict
 from engines.hybrid.weighted import HybridEngine
-from core.engine import Engine
+from core.engine.simple import Engine
 from core.taxonomy import Taxonomy
 
 class HybridTestCase(unittest.TestCase):
@@ -23,7 +23,7 @@ class HybridTestCase(unittest.TestCase):
 
         components = {'component1': component1, 'component2': component2}
         settings = {'weight': {'component1': 0.25, 'component2': 0.75}}
-        self.engine = HybridEngine('hybrid', components, settings)
+        self.engine = HybridEngine('hybrid', taxonomy, components, settings)
 
     def test_recommend(self):
         result1 = {'item1': 6, 'item2': 2, 'item3': 1}
@@ -37,6 +37,11 @@ class HybridTestCase(unittest.TestCase):
         self.assertEqual(self.engine.recommend({'key': 'value'}), [
             'item2', 'item3', 'item1'
         ])
+
+        old_taxonomy = self.engine.taxonomy
+        self.engine.taxonomy = Taxonomy('base', {'key': 'value', 'limit': '2'})
+        self.assertEqual(self.engine.recommend({'key': 'value'}), ['item2', 'item3'])
+        self.engine.taxonomy = old_taxonomy
 
     def test_get_results(self):
         result1 = {'item1': 6, 'item2': 2}
@@ -81,3 +86,4 @@ class HybridTestCase(unittest.TestCase):
         }
 
         self.assertEqual(self.engine.merge(data), ['item2', 'item1', 'item3', 'item4'])
+        self.assertEqual(self.engine.merge(data, 2), ['item2', 'item1'])

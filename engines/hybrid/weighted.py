@@ -3,7 +3,9 @@ from core.engine.hybrid import HybridEngine as ParentHybridEngine
 
 class HybridEngine(ParentHybridEngine):
     def recommend(self, body):
-        return self.merge(self.apply_weight(self.get_results(body)))
+        data = self.translate(body)
+        limit = data['limit'] if 'limit' in data else False
+        return self.merge(self.apply_weight(self.get_results(body)), limit)
 
     def get_results(self, body):
         results = {}
@@ -20,13 +22,13 @@ class HybridEngine(ParentHybridEngine):
 
         for component, result in results.iteritems():
             if component in self.settings['weight']:
-                weight = self.settings['weight'][component]
+                weight = float(self.settings['weight'][component])
                 for recommendation, score in result.iteritems():
                     results[component][recommendation] = score * weight
-
+        print results
         return results
 
-    def merge(self, results):
+    def merge(self, results, limit=False):
         merged = OrderedDict()
         for result in results.itervalues():
             for recommendation, score in result.iteritems():
@@ -36,4 +38,9 @@ class HybridEngine(ParentHybridEngine):
                 merged[recommendation] = score
 
         # this drops the scores, so no needs to call .keys() afterwards
-        return sorted(merged, key=merged.__getitem__, reverse=True)
+        sorted_results = sorted(merged, key=merged.__getitem__, reverse=True)
+
+        if limit != False:
+            return sorted_results[:int(limit)]
+
+        return sorted_results

@@ -82,10 +82,7 @@ class Config(object):
     def parse_recommenders(self):
         for recommenderEl in self.root.findall('./recommenders/recommender'):
             # get taxonomy (per recommender)
-            taxonomyEl = recommenderEl.find('taxonomy')
-            taxonomy = Taxonomy(taxonomyEl.get('name'), self.parse_taxons(taxonomyEl))
-            if taxonomyEl.get('inherit'):
-                taxonomy.inherit(self.taxonomies[taxonomyEl.get('inherit')])
+            taxonomy = self.parse_taxonomy_for_recommender(recommenderEl)
 
             # get settings for engine
             engine = recommenderEl.get('engine')
@@ -109,6 +106,9 @@ class Config(object):
             for componentEl in hybridRecommenderEl.findall('./components/component'):
                 components[componentEl.get('name')] = self.recommenders[componentEl.get('recommender')]
 
+            # get taxonomy
+            taxonomy = self.parse_taxonomy_for_recommender(hybridRecommenderEl)
+
             # get settings
             settings = self.parse_settings(hybridRecommenderEl.findall('./settings/*'))
 
@@ -120,8 +120,16 @@ class Config(object):
             # create engine object
             name = hybridRecommenderEl.get('name')
             self.recommenders[name] = adapter.HybridEngine(
-                name, components, settings
+                name, taxonomy, components, settings
             )
+
+    def parse_taxonomy_for_recommender(self, recommenderEl):
+        taxonomyEl = recommenderEl.find('taxonomy')
+        taxonomy = Taxonomy(taxonomyEl.get('name'), self.parse_taxons(taxonomyEl))
+        if taxonomyEl.get('inherit'):
+            taxonomy.inherit(self.taxonomies[taxonomyEl.get('inherit')])
+
+        return taxonomy
 
     def parse_events(self, recommenderEl, recommender):
         for eventEl in recommenderEl.findall('./on'):

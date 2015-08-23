@@ -2,28 +2,29 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../config/config.xsd">
     <recommenders>
         <recommender name="recommender1" engine="base">
-            <on event="event1" do="perform" />
             <taxonomy inherit="taxonomy2">
                 <taxon name="taxon4">value4</taxon>
             </taxonomy>
+            <on event="event1" do="perform" />
         </recommender>
         <recommender name="recommender2" engine="base">
-            <on event="event2" do="add" />
-            <on event="event3" do="remove" />
             <taxonomy inherit="taxonomy2">
                 <taxon name="taxon3">value3b</taxon><!-- taxon3 from parent will be ignored -->
                 <taxon name="taxon4">value4b</taxon>
             </taxonomy>
-        </recommender>
-        <recommender name="recommender3" engine="base">
             <on event="event2" do="add" />
             <on event="event3" do="remove" />
+        </recommender>
+        <recommender name="recommender3" engine="base">
             <taxonomy inherit="taxonomy1">
                 <taxon name="taxon2">value2b</taxon>
                 <taxon name="taxon3">value3b</taxon>
             </taxonomy>
+            <on event="event2" do="add" />
+            <on event="event3" do="remove" />
         </recommender>
         <hybrid_recommender name="recommender4" engine="base">
+            <taxonomy inherit="taxonomy1" />
             <components>
                 <component name="component1" recommender="recommender1" />
                 <component name="component2" recommender="recommender2" />

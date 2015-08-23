@@ -40,6 +40,14 @@
     </xs:complexType>
 
     <xs:complexType name="baseRecommender">
+        <xs:sequence>
+            <xs:element name="taxonomy" type="taxonomy" minOccurs="0" maxOccurs="1">
+                <xs:unique name="uniqueTaxonRecommender">
+                    <xs:selector xpath="taxon" />
+                    <xs:field xpath="@name" />
+                </xs:unique>
+            </xs:element>
+        </xs:sequence>
         <xs:attribute name="name" type="identifier" use="required" />
         <xs:attribute name="engine" type="identifier" use="required" />
     </xs:complexType>
@@ -53,12 +61,6 @@
                             <xs:attribute name="event" type="identifier" use="required" />
                             <xs:attribute name="do" type="identifier" use="required" />
                         </xs:complexType>
-                    </xs:element>
-                    <xs:element name="taxonomy" type="taxonomy" minOccurs="0" maxOccurs="1">
-                        <xs:unique name="uniqueTaxonRecommender">
-                            <xs:selector xpath="taxon" />
-                            <xs:field xpath="@name" />
-                        </xs:unique>
                     </xs:element>
                 </xs:sequence>
             </xs:extension>
@@ -104,7 +106,7 @@
 
     <xs:complexType name="taxonomy">
         <xs:sequence>
-            <xs:element name="taxon" minOccurs="1" maxOccurs="unbounded">
+            <xs:element name="taxon" minOccurs="0" maxOccurs="unbounded">
                 <xs:complexType>
                     <xs:simpleContent>
                         <xs:extension base="xs:string">

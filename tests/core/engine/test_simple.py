@@ -2,7 +2,7 @@ import unittest
 from collections import OrderedDict
 from mock import MagicMock
 from core.taxonomy import Taxonomy
-from core.engine import Engine
+from core.engine.simple import Engine
 
 class EngineTestCase(unittest.TestCase):
     def setUp(self):

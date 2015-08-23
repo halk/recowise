@@ -2,28 +2,29 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="./config.xsd">
     <recommenders>
         <recommender name="common_products_viewed" engine="in_common">
-            <on event="viewed_product" do="post" />
             <taxonomy inherit="user_product">
                 <taxon name="relationship">VIEWED</taxon>
             </taxonomy>
+            <on event="viewed_product" do="post" />
         </recommender>
         <recommender name="common_products_wishlisted" engine="in_common">
-            <on event="added_to_wishlist" do="post" />
-            <on event="removed_from_wishlist" do="delete" />
             <taxonomy inherit="user_product">
                 <taxon name="relationship">WISHLISTED</taxon>
             </taxonomy>
+            <on event="added_to_wishlist" do="post" />
+            <on event="removed_from_wishlist" do="delete" />
         </recommender>
         <recommender name="similar_products_in_basket" engine="item_similarity">
-            <on event="saved_product" do="post" />
-            <on event="deleted_product" do="delete" />
             <taxonomy inherit="base">
                 <taxon name="item_id">sku</taxon>
                 <taxon name="itemIds">sku</taxon>
                 <taxon name="attributes">data</taxon>
             </taxonomy>
+            <on event="saved_product" do="post" />
+            <on event="deleted_product" do="delete" />
         </recommender>
         <hybrid_recommender name="interesting_products" engine="weighted">
+            <taxonomy inherit="base" />
             <components>
                 <component name="views" recommender="common_products_viewed" />
                 <component name="wishlists" recommender="common_products_wishlisted" />

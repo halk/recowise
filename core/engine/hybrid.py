@@ -1,9 +1,9 @@
+from . import AbstractEngine
 
-class HybridEngine:
-    def __init__(self, name, components, settings = {}):
-        self.name = name
+class HybridEngine(AbstractEngine):
+    def __init__(self, name, taxonomy, components, settings = {}):
+        super(HybridEngine, self).__init__(name, taxonomy, settings)
         self.components = components
-        self.settings = {} if settings is None else settings
 
     def get_components(self):
         return self.components
