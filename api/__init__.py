@@ -24,8 +24,8 @@ from api.recommend import recommend
 app.register_blueprint(event, url_prefix='/event')
 app.register_blueprint(recommend, url_prefix='/recommend')
 
-# default test route
+# default route
 
 @app.route("/")
 def hello():
-    return "Welcome to the Multi-Purpose Recommender System!"
+    return "Welcome to the Multi-Purpose Recommender Framework!"
